@@ -1,6 +1,12 @@
+load('header.mat');
 N = 1000;
 % make 100 random bits of values +- 1
-bits = sign(randn(N,1));
+bitsR(1:100) = header;
+bitsR(101:101+N-1)= sign(randn(N,1));
+bitsI(1:100) = header;
+bitsI(101:101+N-1) = sign(randn(N,1));
+
+bits = bitsR + bitsI * j;
 
 Symbol_period = 20;
 
@@ -44,7 +50,7 @@ tmp(1:2:end) = real(x_tx);
 tmp(2:2:end) = imag(x_tx);
 
 % open a file to write in binary format 
-f1 = fopen('tx2.dat', 'wb');
+f1 = fopen('tx.dat', 'wb');
 % write the values as a float32
 fwrite(f1, tmp/10, 'float32');
 % close the file
