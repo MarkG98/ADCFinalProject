@@ -41,13 +41,13 @@ title('Imaginary')
 N = length(real(y));
 frequencies_shifted = (linspace(-pi, pi-2/N*pi, N) + pi/N*mod(N,2));
 figure;
-a = fftshift(fft(y.^2));
+a = fftshift(fft(y.^4));
 plot(frequencies_shifted,abs(a));
 
 % Calculate frequency and phase offset
 [M,I] = max(abs(a));
-foffset = frequencies_shifted(I)/2;
-aoffset = angle(a(I))/2;
+foffset = frequencies_shifted(I)/4;
+aoffset = angle(a(I))/4;
 
 % Divide output by the exponential coefficient in order to get x * h which
 % is good enough because the channel is fairly small compared to our
@@ -56,16 +56,16 @@ times = 0:1:length(y) - 1;
 expon = exp(j*(foffset*times + aoffset));
 res = y.'./expon;
 
-% Checking if phase was corrected in the correct direction
-% and changing sign if necessary
-if (sign(max(r)) == -1)
-    res = -res;
-end
 
 
 % Plot recieved bits
 figure;
-stem(res)
+stem(real(res))
+title('R')
+
+figure;
+stem(imag(res))
+title('I')
 
 % Extract bits from transmitted and received messages
 i = 1;
