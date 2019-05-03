@@ -16,8 +16,14 @@ fclose(f2);
 y = zeros(length(tmp)/2,1);
 y = tmp(1:2:end)+j*tmp(2:2:end);
 
-indexes = find(abs(real(y))>0.0008);
-y = y(indexes);
+% Store original signal
+orig = y;
+
+% Cross correlate the recieved
+[r, lags] = xcorr(orig,header);
+[~,I] = max(r);
+delay = lags(I);
+y = orig(delay:delay+1100*20);
 
 % to visualize, plot the real and imaginary parts separately
 %return;
@@ -28,11 +34,11 @@ subplot(212)
 stem(imag(y));
 title('Imaginary')
 
-%% Our Code
+%% Decode
 
 % Plot the FFT of the recieved signal squared in order to derive
 % frequency and phase offset
-N = length(y);
+N = length(real(y));
 frequencies_shifted = (linspace(-pi, pi-2/N*pi, N) + pi/N*mod(N,2));
 figure;
 a = fftshift(fft(y.^2));
@@ -50,15 +56,20 @@ times = 0:1:length(y) - 1;
 expon = exp(j*(foffset*times + aoffset));
 res = y.'./expon;
 
+% Checking if phase was corrected in the correct direction
+% and changing sign if necessary
+if (sign(max(r)) == -1)
+    res = -res;
+end
+
+
 % Plot recieved bits
 figure;
-plot(real(res))
+stem(res)
 
-%i = 1;
-%res1 = [];
-%for m = 1:1:length(real(res))
-    %if (abs(real(res(m))) > 3*10^-3)
-        %res1(i) = real(res(m));
-        %i = i + 1;
-    %end
-%end
+% Extract bits from transmitted and received messages
+i = 1;
+for m = 10:20:length(res)
+    received_bits(i) = sign(real(res(m)));
+    i = i + 1;
+end
