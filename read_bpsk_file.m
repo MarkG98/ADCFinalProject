@@ -58,8 +58,8 @@ res = y.'./expon;
 
 % Checking if phase was corrected in the correct direction
 % and changing sign if necessary
-if (sign(max(r)) == -1)
-    res = -res;
+if (abs(min(real(r))) > abs(max(real(r))))
+    res = -real(res);
 end
 
 
