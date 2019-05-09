@@ -29,9 +29,13 @@ y = orig(delay:delay+1100*20);
 subplot(211)
 stem(real(y));
 title('Real')
+xlabel('Sample')
+ylabel('Magnitude')
 subplot(212)
 stem(imag(y));
 title('Imaginary')
+xlabel('Sample')
+ylabel('Magnitude')
 
 %% Decode
 
@@ -42,6 +46,10 @@ frequencies_shifted = (linspace(-pi, pi-2/N*pi, N) + pi/N*mod(N,2));
 figure;
 a = fftshift(fft(y.^4));
 plot(frequencies_shifted,abs(a));
+xlabel('Frequency (Radians/Sample)')
+ylabel('Magnitude')
+title('FFT of Recieved Signal Raised to the Fourth')
+
 
 % Calculate frequency and phase offset
 [M,I] = max(abs(a));
@@ -92,11 +100,15 @@ end
 % Plot recieved bits
 figure;
 stem(real(res))
-title('R')
+title('Real Bits')
+xlabel('Bit Number')
+ylabel('Magnitude')
 
 figure;
 stem(imag(res))
-title('I')
+title('Imaginary Bits')
+xlabel('Bit Number')
+ylabel('Magnitude')
 
 % Extract bits from transmitted and received messages
 i = 1;
